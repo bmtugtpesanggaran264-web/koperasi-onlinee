@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Pembiayaan</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.2.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        /* Gaya Umum dari styles.css */
+        @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap");
+        :root {
+            --header-height: 3.5rem;
+            --black-color: hsl(220, 24%, 12%);
+            --white-color: #fff;
+            --z-fixed: 100;
+        }
+        html { scroll-behavior: smooth; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: "Montserrat", sans-serif; line-height: 1.5; min-height: 100vh; color: #222; }
+        .header { position: fixed; top: 0; left: 0; width: 100%; background-color: rgba(0,0,0,0.85); z-index: var(--z-fixed); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+        .nav { height: var(--header-height); display: flex; justify-content: space-between; align-items: center; }
+        .container { max-width: 1120px; margin-inline: 1.5rem; width: 100%; display: flex; align-items: center; justify-content: space-between; }
+        .nav__logo { display: flex; align-items: center; color: var(--white-color); font-weight: 600; font-size: 1.1rem; }
+        .nav__logo-img { height: 30px; margin-right: .5rem; background: white; border-radius: 50%; padding: 3px; }
+        .nav__toggle { color: var(--white-color); font-size: 1.5rem; cursor: pointer; display: block; }
+        .nav__menu { position: fixed; top: var(--header-height); left: -100%; width: 100%; background-color: rgba(0,0,0,0.95); transition: .3s; }
+        .nav__menu.show-menu { left: 0; }
+        .nav__list { display: flex; flex-direction: column; padding: 1rem; }
+        .nav__link { color: var(--white-color); padding: 1rem; display: block; }
+        .nav__link:hover, .nav__link.active { color: #0077ff; font-weight: bold; }
+        .dropdown__item { position: relative; }
+        .dropdown__toggle { cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .dropdown__menu { display: none; flex-direction: column; margin-left: 1rem; background-color: rgba(0,0,0,0.9); border-radius: .25rem; overflow: hidden; }
+        .dropdown__item.open .dropdown__menu { display: flex; }
+        .dropdown__arrow { margin-left: .25rem; font-size: 1.2rem; }
+        .dropdown__link { color: var(--white-color); padding: .75rem 1rem; display: block; }
+        .dropdown__link:hover { background-color: rgba(255,255,255,0.1); }
+        .section { padding: 4rem 1.5rem; background-color: #f9f9f9; color: #222; text-align: center; }
+        .section:nth-child(even) { background-color: #ffffff; }
+        .section__title { font-size: 2rem; margin-bottom: 1rem; color: #0077ff; }
+        .btn { display: inline-flex; align-items: center; gap: .5rem; padding: .7rem 1.2rem; border-radius: .5rem; font-weight: 600; cursor: pointer; border: none; text-decoration: none; justify-content: center; }
+        .btn-green { background: #28a745; color: #fff; }
+        .btn-green:hover { background: #1e7e34; }
+        .footer { background: #333; color: white; text-align: center; padding: 1rem; }
+        
+        /* Gaya Khusus untuk Halaman & Formulir */
+        body {
+            background-color: #f0f2f5;
+            color: #222;
+        }
+        .form-card {
+            max-width: 1000px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 24px;
+        }
+        .form-header {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            margin: -24px -24px 24px -24px;
+        }
+        .form-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .form-section {
+            padding: 16px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .form-section:last-child {
+            border-bottom: none;
+        }
+        .form-section h2 {
+            font-size: 1.875rem;
+            font-weight: 600;
+            color: #10B981;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #10B981;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .form-section h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin-top: 32px;
+            margin-bottom: 16px;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .form-group label {
+            font-weight: 600;
+            color: #4a5568;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 1rem;
+            color: #2d3748;
+            width: 100%;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: #10B981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+            outline: none;
+        }
+        .currency-input-wrapper {
+            position: relative;
+        }
+        .currency-input-wrapper::before {
+            content: 'Rp';
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-weight: 600;
+        }
+        .currency-input {
+            padding-left: 40px;
+            text-align: right;
+        }
+        .btn-submit {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.125rem;
+            font-weight: 700;
+            border-radius: 9999px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+            border: none;
+            width: 100%;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.6);
+        }
+        .loading-indicator {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            font-weight: 600;
+            color: #10B981;
+        }
+        .alert-box {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .alert-box.error {
+            background-color: #f44336;
+        }
+        .alert-box.show {
+            display: block;
+            opacity: 1;
+        }
+        /* Styling untuk form yang disembunyikan */
+        .pembiayaan-form, .pembiayaan-info {
+            display: none;
+        }
+        .pembiayaan-info.active, .pembiayaan-form.active {
+            display: block;
+        }
+
+        /* Styling tambahan untuk multi-step form */
+        .form-step {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        .form-step.active {
+            display: block;
+        }
+        .form-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 24px;
+        }
+        .form-navigation .btn {
+            width: 48%;
+        }
+        .form-navigation .btn-submit {
+            width: 100%;
+        }
+        .requirements-list-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: left;
+        }
+        .requirements-list-wrapper ul, .requirements-list-wrapper ol {
+            padding-left: 2rem;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Gaya untuk tombol navigasi kembali ke Beranda */
+        .back-links {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            justify-content: flex-start;
+        }
+        .back-links a {
+            display: inline-flex;
+            align-items: center;
+            color: #4a5568;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .back-links a:hover {
+            color: #10B981;
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <nav class="nav container">
+        <a href="koperasi_home.html" class="nav__logo">
+            <img src="logo.png" alt="Logo" class="nav__logo-img"> Koperasi
+        </a>
+        <div class="nav__toggle" id="nav-toggle">
+            <i class="ri-menu-line"></i>
+        </div>
+        <div class="nav__menu" id="nav-menu">
+            <ul class="nav__list">
+                <li><a href="koperasi_home.html" class="nav__link">Beranda</a></li>
+                <li><a href="koperasi_home.html#produk" class="nav__link">Produk</a></li>
+                <li><a href="koperasi_home.html#tentang" class="nav__link">Tentang</a></li>
+                <li><a href="profil.html" class="nav__link">Profil Lengkap</a></li>
+                <li><a href="koperasi_home.html#kontak" class="nav__link">Kontak</a></li>
+                <li><a href="kontak.html" class="nav__link">Detail Kontak</a></li>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+<main>
+    <section class="section pembiayaan-info active" id="pembiayaan-info">
+        <div class="container">
+            <h2 class="section__title">Persyaratan Pembiayaan</h2>
+            <div class="requirements-list-wrapper">
+                <ol>
+                    <li>Foto Copy Suami Istri</li>
+                    <li>Foto Copy Kartu Keluarga</li>
+                    <li>Foto Buku Nikah</li>
+                    <li>Foto Copy Jaminan:
+                        <ul style="padding-left: 2rem;">
+                            <li>BPKB (sertakan STNK dengan pajak hidup)</li>
+                            <li>SHM (sertakan SPPPT & atas nama sendiri)</li>
+                            <li>Surat Berharga (Deposito, Tabungan, Saham)</li>
+                            <li>Emas (sertakan nota pembelian)</li>
+                        </ul>
+                    </li>
+                    <li>Foto Jaminan</li>
+                </ol>
+            </div>
+            <div style="max-width: 600px; margin: 2rem auto 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+                <a href="koperasi_home.html" class="btn btn-green">
+                    <i class="ri-arrow-left-line"></i> Kembali ke Beranda
+                </a>
+                <button id="btnShowForm" class="btn btn-green">
+                    Lanjut Isi Formulir <i class="ri-arrow-right-line"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section class="section pembiayaan-form" id="pembiayaan-form">
+        <div class="container">
+            <div class="form-card">
+                <div class="form-header">
+                    <h1>📝 Formulir Input Data Pembiayaan Syariah</h1>
+                    <p class="text-lg">Isi data lengkap untuk pengajuan pembiayaan</p>
+                </div>
+                
+                <form id="pembiayaanForm">
+                    <div class="back-links">
+                        <a href="koperasi_home.html">
+                            <i class="ri-home-4-line" style="margin-right: 5px;"></i>
+                            Kembali ke Beranda
+                        </a>
+                        <a href="#" id="btnBackToRequirements">
+                            <i class="ri-arrow-left-line" style="margin-right: 5px;"></i>
+                            Kembali ke Persyaratan
+                        </a>
+                    </div>
+
+                    <div class="form-step active" id="step1">
+                        <h2>
+                            <i class="ri-user-line" style="margin-right:10px;"></i>
+                            Data Pribadi Pemohon
+                        </h2>
+                        <div class="form-grid">
+                            <div class="form-group"><label for="Timestamp">Timestamp</label><input type="text" id="Timestamp" name="Timestamp" readonly></div>
+                            <div class="form-group"><label for="NoRekening">No Rekening</label><input type="text" id="NoRekening" name="No Rekening" placeholder="Contoh: 1234567890"></div>
+                            <div class="form-group"><label for="NamaLengkap">Nama Lengkap</label><input type="text" id="NamaLengkap" name="Nama Lengkap" placeholder="Nama lengkap sesuai KTP"></div>
+                            <div class="form-group"><label for="Bin">Bin (Nama Ayah Kandung)</label><input type="text" id="Bin" name="Bin" placeholder="Nama ayah kandung"></div>
+                            <div class="form-group">
+                                <label for="JenisKelamin">Jenis Kelamin</label>
+                                <select id="JenisKelamin" name="Jenis Kelamin">
+                                    <option value="">Pilih Jenis Kelamin</option>
+                                    <option value="Laki-laki">Laki-laki</option>
+                                    <option value="Perempuan">Perempuan</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label for="TempatLahir">Tempat Lahir</label><input type="text" id="TempatLahir" name="Tempat Lahir" placeholder="Contoh: Surabaya"></div>
+                            <div class="form-group"><label for="TanggalLahir">Tanggal Lahir</label><input type="date" id="TanggalLahir" name="Tanggal Lahir"></div>
+                            <div class="form-group"><label for="NoTeleponHP">No. Telepon/HP</label><input type="tel" id="NoTeleponHP" name="No. Telepon/HP" placeholder="Contoh: 081234567890"></div>
+                            <div class="form-group">
+                                <label for="StatusPerkawinan">Status Perkawinan</label>
+                                <select id="StatusPerkawinan" name="Status Perkawinan">
+                                    <option value="">Pilih Status</option>
+                                    <option value="Belum Nikah">Belum Nikah</option>
+                                    <option value="Nikah">Nikah</option>
+                                    <option value="Cerai Hidup">Cerai Hidup</option>
+                                    <option value="Cerai Mati">Cerai Mati</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label for="Sudah">Sudah (Lama Menikah/Bekerja)</label><input type="text" id="Sudah" name="Sudah" placeholder="Contoh: 5 tahun"></div>
+                        </div>
+
+                        <h3>Alamat Sesuai KTP</h3>
+                        <div class="form-grid">
+                            <div class="form-group"><label for="DusunKTP">Dusun KTP</label><input type="text" id="DusunKTP" name="Dusun KTP" placeholder="Contoh: Krajan"></div>
+                            <div class="form-group"><label for="RTRWKTP">RT/RW KTP</label><input type="text" id="RTRWKTP" name="RT/RW KTP" placeholder="Contoh: 001/002"></div>
+                            <div class="form-group"><label for="KelurahanDesaKTP">Kelurahan/Desa KTP</label><input type="text" id="KelurahanDesaKTP" name="Kelurahan/Desa KTP" placeholder="Contoh: Sumberagung"></div>
+                            <div class="form-group"><label for="KecamatanKTP">Kecamatan KTP</label><input type="text" id="KecamatanKTP" name="Kecamatan KTP" placeholder="Contoh: Pesanggaran"></div>
+                            <div class="form-group"><label for="KabupatenKotaKTP">Kabupaten/Kota KTP</label><input type="text" id="KabupatenKotaKTP" name="Kabupaten/Kota KTP" placeholder="Contoh: Banyuwangi"></div>
+                            <div class="form-group"><label for="ProvinsiKTP">Provinsi KTP</label><input type="text" id="ProvinsiKTP" name="Provinsi KTP" placeholder="Contoh: Jawa Timur"></div>
+                            <div class="form-group"><label for="KodePosKTP">Kode Pos KTP</label><input type="text" id="KodePosKTP" name="Kode Pos KTP" placeholder="Contoh: 68488"></div>
+                        </div>
+
+                        <h3>Alamat Tempat Tinggal Sekarang</h3>
+                        <div class="form-grid">
+                            <div class="form-group"><label for="DusunTinggal">Dusun Tempat Tinggal</label><input type="text" id="DusunTinggal" name="Dusun Tempat Tinggal" placeholder="Contoh: Krajan"></div>
+                            <div class="form-group"><label for="RTRWTinggal">RT/RW Tempat Tinggal</label><input type="text" id="RTRWTinggal" name="RT/RW Tempat Tinggal" placeholder="Contoh: 001/002"></div>
+                            <div class="form-group"><label for="KelurahanDesaTinggal">Kelurahan/Desa Tempat Tinggal</label><input type="text" id="KelurahanDesaTinggal" name="Kelurahan/Desa Tempat Tinggal" placeholder="Contoh: Sumberagung"></div>
+                            <div class="form-group"><label for="KecamatanTinggal">Kecamatan Tempat Tinggal</label><input type="text" id="KecamatanTinggal" name="Kecamatan Tempat Tinggal" placeholder="Contoh: Pesanggaran"></div>
+                            <div class="form-group"><label for="KabupatenKotaTinggal">Kabupaten/Kota Tempat Tinggal</label><input type="text" id="KabupatenKotaTinggal" name="Kabupaten/Kota Tempat Tinggal" placeholder="Contoh: Banyuwangi"></div>
+                            <div class="form-group"><label for="ProvinsiTinggal">Provinsi Tempat Tinggal</label><input type="text" id="ProvinsiTinggal" name="Provinsi Tempat Tinggal" placeholder="Contoh: Jawa Timur"></div>
+                            <div class="form-group">
+                                <label for="StatusTempatTinggal">Status Tempat Tinggal</label>
+                                <select id="StatusTempatTinggal" name="Status Tempat Tinggal">
+                                    <option value="">Pilih Status</option>
+                                    <option value="Hak Milik">Hak Milik</option>
+                                    <option value="Kontrak">Kontrak</option>
+                                    <option value="Menumpang Wali">Menumpang Wali</option>
+                                    <option value="Rumah Dinas">Rumah Dinas</option>
+                                    <option value="Kos">Kos</option>
+                                    <option value="Lainnya">Lainnya</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="PendidikanTerakhir">Pendidikan Terakhir</label>
+                                <select id="PendidikanTerakhir" name="Pendidikan Terakhir">
+                                    <option value="">Pilih Pendidikan</option>
+                                    <option value="SD/MI">SD/MI</option>
+                                    <option value="SMP/MTs">SMP/MTs</option>
+                                    <option value="SMA/SMK/MA">SMA/SMK/MA</option>
+                                    <option value="D1-D3">D1-D3</option>
+                                    <option value="S1">S1</option>
+                                    <option value="S2">S2</option>
+                                    <option value="S3">S3</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label for="TahunLulus">Tahun Lulus</label><input type="number" id="TahunLulus" name="Tahun Lulus" placeholder="Contoh: 2010"></div>
+                        </div>
+
+                        <h3>Jumlah Tanggungan Keluarga</h3>
+                        <div class="form-grid">
+                            <div class="form-group"><label for="JumlahIstriSuami">Jumlah Istri/Suami</label><input type="number" id="JumlahIstriSuami" name="Jumlah Istri-Suami" value="0" min="0"></div>
+                            <div class="form-group"><label for="JumlahAnak">Jumlah Anak</label><input type="number" id="JumlahAnak" name="Jumlah Anak" value="0" min="0"></div>
+                            <div class="form-group"><label for="OrangTua">Orang Tua (yang ditanggung)</label><input type="number" id="OrangTua" name="Orang Tua" value="0" min="0"></div>
+                            <div class="form-group"><label for="LainnyaTanggungan">Lainnya (yang ditanggung)</label><input type="number" id="LainnyaTanggungan" name="Lainnya" value="0" min="0"></div>
+                            <div class="form-group"><label for="TotalTanggungan">Total Tanggungan</label><input type="text" id="TotalTanggungan" name="Total Tanggungan" readonly></div>
+                        </div>
+                        
+                        <div class="form-navigation">
+                            <button type="button" class="btn btn-green" id="nextStep1">
+                                Lanjut <i class="ri-arrow-right-line"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-step" id="step2">
+                        <h2>
+                            <i class="ri-wallet-line" style="margin-right:10px;"></i>
+                            Data Pekerjaan dan Keuangan
+                        </h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="SumberPendapatan">Sumber Pendapatan</label>
+                                <select id="SumberPendapatan" name="Sumber Pendapatan">
+                                    <option value="">Pilih Sumber</option>
+                                    <option value="Pegawai Swasta">Pegawai Swasta</option>
+                                    <option value="Wiraswasta">Wiraswasta</option>
+                                    <option value="Petani">Petani</option>
+                                    <option value="Nelayan">Nelayan</option>
+                                    <option value="PNS">PNS</option>
+                                    <option value="TNI/POLRI">TNI/POLRI</option>
+                                    <option value="Lainnya">Lainnya</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label for="PekerjaanLainnya">Pekerjaan Lainnya (jika ada)</label><input type="text" id="PekerjaanLainnya" name="Pekerjaan Lainnya" placeholder="Sebutkan"></div>
+                            <div class="form-group"><label for="NamaInstansi">Nama Instansi/Perusahaan</label><input type="text" id="NamaInstansi" name="Nama Instansi" placeholder="Contoh: PT ABC"></div>
+                            <div class="form-group"><label for="Jabatan">Jabatan</label><input type="text" id="Jabatan" name="Jabatan" placeholder="Contoh: Karyawan"></div>
+                            <div class="form-group">
+                                <label for="LamaBekerja">Lama Bekerja (Tahun)</label>
+                                <input type="number" id="LamaBekerja" name="Lama Bekerja (Tahun)" value="0" min="0">
+                            </div>
+                            <div class="form-group"><label for="NoTelpKantor">No. Telepon Kantor</label><input type="tel" id="NoTelpKantor" name="No. Telepon Kantor" placeholder="Contoh: 0333-123456"></div>
+                            <div class="form-group">
+                                <label for="PendapatanBulan">Pendapatan Rata-rata/Bulan</label>
+                                <div class="currency-input-wrapper">
+                                    <input type="text" id="PendapatanBulan" name="Pendapatan Rata-rata/Bulan" class="currency-input" placeholder="Contoh: 5.000.000">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="PendapatanLainnya">Pendapatan Lainnya/Bulan (jika ada)</label>
+                                <div class="currency-input-wrapper">
+                                    <input type="text" id="PendapatanLainnya" name="Pendapatan Lainnya/Bulan" class="currency-input" placeholder="Contoh: 1.000.000">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="TotalPendapatan">Total Pendapatan/Bulan</label>
+                                <div class="currency-input-wrapper">
+                                    <input type="text" id="TotalPendapatan" name="Total Pendapatan/Bulan" class="currency-input" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3>Data Keuangan</h3>
+                        <div class="form-grid">
+                            <div class="form-group"><label for="TujuanPembiayaan">Tujuan Pembiayaan</label><textarea id="TujuanPembiayaan" name="Tujuan Pembiayaan" rows="3" placeholder="Contoh: Untuk modal usaha konveksi"></textarea></div>
+                            <div class="form-group">
+                                <label for="PlafondPembiayaan">Plafond Pembiayaan yang diajukan</label>
+                                <div class="currency-input-wrapper">
+                                    <input type="text" id="PlafondPembiayaan" name="Plafond Pembiayaan" class="currency-input" placeholder="Contoh: 20.000.000">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="AngsuranBulan">Angsuran per Bulan</label>
+                                <div class="currency-input-wrapper">
+                                    <input type="text" id="AngsuranBulan" name="Angsuran per Bulan" class="currency-input" placeholder="Contoh: 850.000">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="JangkaWaktu">Jangka Waktu Pembiayaan (Bulan)</label>
+                                <input type="number" id="JangkaWaktu" name="Jangka Waktu" value="0" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="Jaminan">Jaminan</label>
+                                <select id="Jaminan" name="Jaminan">
+                                    <option value="">Pilih Jaminan</option>
+                                    <option value="SHM">Sertifikat Hak Milik</option>
+                                    <option value="BPKB Mobil">BPKB Mobil</option>
+                                    <option value="BPKB Motor">BPKB Motor</option>
+                                    <option value="Lainnya">Lainnya</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label for="TaksiranJaminan">Taksiran Jaminan</label><input type="text" id="TaksiranJaminan" name="Taksiran Jaminan" placeholder="Contoh: 25.000.000"></div>
+                            <div class="form-group">
+                                <label for="PengeluaranLain">Pengeluaran Lain/Bulan</label>
+                                <div class="currency-input-wrapper">
+                                    <input type="text" id="PengeluaranLain" name="Pengeluaran Lain/Bulan" class="currency-input" placeholder="Contoh: 500.000">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="TotalAngsuran">Total Angsuran/Bulan (termasuk cicilan lain)</label>
+                                <div class="currency-input-wrapper">
+                                    <input type="text" id="TotalAngsuran" name="Total Angsuran/Bulan" class="currency-input" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-navigation">
+                            <button type="button" class="btn btn-red" id="prevStep2">
+                                <i class="ri-arrow-left-line"></i> Kembali
+                            </button>
+                            <button type="submit" class="btn-submit">
+                                Kirim Data
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <div class="loading-indicator">Mengirim data...</div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <p>© 2025 Koperasi. Semua Hak Dilindungi.</p>
+</footer>
+
+<div id="alertBox" class="alert-box"></div>
+
+<script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzxSFBmC6V6mHk1K3TRa9-wb-YRtezUKbauVKZl_DJGMcUTmZl6RwCYcbmH1A53ltLZWw/exec';
+    const form = document.getElementById('pembiayaanForm');
+    const loadingIndicator = document.querySelector('.loading-indicator');
+    const alertBox = document.getElementById('alertBox');
+    const pembiayaanInfo = document.getElementById('pembiayaan-info');
+    const pembiayaanForm = document.getElementById('pembiayaan-form');
+    const btnShowForm = document.getElementById('btnShowForm');
+    const btnBackToRequirements = document.getElementById('btnBackToRequirements');
+
+    // Multi-step form navigation elements
+    const formSteps = document.querySelectorAll('.form-step');
+    let currentStep = 0;
+
+    function showStep(stepIndex) {
+        formSteps.forEach((step, index) => {
+            step.classList.toggle('active', index === stepIndex);
+        });
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // Fungsi untuk memformat angka menjadi mata uang Rupiah
+    function formatRupiah(number) {
+        return new Intl.NumberFormat('id-ID').format(number);
+    }
+
+    // Fungsi untuk mengurai format mata uang ke angka
+    function parseCurrency(string) {
+        if (!string) return 0;
+        return parseInt(string.replace(/[^0-9]/g, '')) || 0;
+    }
+
+    // Fungsi untuk menampilkan alert
+    function showAlert(message, type) {
+        alertBox.textContent = message;
+        alertBox.className = `alert-box show ${type}`;
+        setTimeout(() => {
+            alertBox.classList.remove('show');
+        }, 5000);
+    }
+
+    // Fungsi untuk memperbarui perhitungan
+    function updateCalculations() {
+        const pendapatanBulan = parseCurrency(document.getElementById('PendapatanBulan').value);
+        const pendapatanLainnya = parseCurrency(document.getElementById('PendapatanLainnya').value);
+        const totalPendapatan = pendapatanBulan + pendapatanLainnya;
+        document.getElementById('TotalPendapatan').value = formatRupiah(totalPendapatan);
+
+        const jumlahIstriSuami = parseInt(document.getElementById('JumlahIstriSuami').value) || 0;
+        const jumlahAnak = parseInt(document.getElementById('JumlahAnak').value) || 0;
+        const orangTua = parseInt(document.getElementById('OrangTua').value) || 0;
+        const lainnyaTanggungan = parseInt(document.getElementById('LainnyaTanggungan').value) || 0;
+        const totalTanggungan = jumlahIstriSuami + jumlahAnak + orangTua + lainnyaTanggungan;
+        document.getElementById('TotalTanggungan').value = totalTanggungan;
+
+        const angsuranBulan = parseCurrency(document.getElementById('AngsuranBulan').value);
+        const pengeluaranLain = parseCurrency(document.getElementById('PengeluaranLain').value);
+        const totalAngsuran = angsuranBulan + pengeluaranLain;
+        document.getElementById('TotalAngsuran').value = formatRupiah(totalAngsuran);
+    }
+
+    // Event listener untuk input yang memicu perhitungan
+    document.querySelectorAll('#PendapatanBulan, #PendapatanLainnya, #JumlahIstriSuami, #JumlahAnak, #OrangTua, #LainnyaTanggungan, #AngsuranBulan, #PengeluaranLain').forEach(input => {
+        input.addEventListener('input', updateCalculations);
+    });
+
+    // Inisialisasi timestamp saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('Timestamp').value = new Date().toLocaleString('id-ID', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+        updateCalculations();
+        //showStep(currentStep); // Menampilkan langkah pertama saat halaman dimuat
+    });
+
+    // Event listener untuk form submission
+    form.addEventListener('submit', async e => {
+        e.preventDefault();
+        loadingIndicator.style.display = 'block';
+
+        const data = {};
+        const formData = new FormData(form);
+        formData.forEach((value, key) => {
+            // Periksa apakah input adalah mata uang, lalu konversi ke angka
+            if (key.includes('Pendapatan') || key.includes('Angsuran')) {
+                data[key] = parseCurrency(value);
+            } else if (key === 'Timestamp') {
+                // Biarkan timestamp sebagai string agar formatnya tidak berubah
+                data[key] = value;
+            } else {
+                data[key] = value;
+            }
+        });
+
+        try {
+            const response = await fetch(scriptURL, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const resultText = await response.text();
+            showAlert('✅ Data berhasil dikirim!', 'success');
+            form.reset();
+            document.getElementById('Timestamp').value = new Date().toLocaleString('id-ID', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+            updateCalculations();
+            // Kembali ke halaman persyaratan setelah berhasil submit
+            pembiayaanForm.classList.remove('active');
+            pembiayaanInfo.classList.add('active');
+            currentStep = 0;
+            showStep(currentStep);
+        } catch (error) {
+            console.error('Error!', error.message);
+            showAlert('❌ Gagal mengirim data: ' + error.message, 'error');
+        } finally {
+            loadingIndicator.style.display = 'none';
+        }
+    });
+
+    // JavaScript untuk menampilkan/menyembunyikan bagian
+    btnShowForm.addEventListener('click', function() {
+        pembiayaanInfo.classList.remove('active');
+        pembiayaanForm.classList.add('active');
+        showStep(0);
+    });
+
+    btnBackToRequirements.addEventListener('click', function(e) {
+        e.preventDefault();
+        pembiayaanForm.classList.remove('active');
+        pembiayaanInfo.classList.add('active');
+        // Reset step form saat kembali ke halaman persyaratan
+        currentStep = 0;
+        showStep(currentStep);
+    });
+
+    document.getElementById('nextStep1').addEventListener('click', function() {
+        currentStep++;
+        showStep(currentStep);
+    });
+
+    document.getElementById('prevStep2').addEventListener('click', function() {
+        currentStep--;
+        showStep(currentStep);
+    });
+</script>
+
+</body>
+</html>
